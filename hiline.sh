@@ -38,6 +38,7 @@ while [ $# -gt 0 ]; do
 
 	case "$color" in
 	'B'*) bold=1; color=${color#B} ;;
+	*) bold= ;;
 	esac
 
 	case "$color" in
