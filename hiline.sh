@@ -5,7 +5,7 @@ usage() {
 Highlight lines matching patterns.
 OS: All.
 
-Usage: ${0##*/} <pattern> [ [color] [pattern [ [color] [...] ] ] ]
+Usage: ${0##*/} [-p] <pattern> [ [color] [pattern [ [color] [...] ] ] ]
 Patterns:
 	Awk regex (don't forget to escape '/').
 Colors:
@@ -13,6 +13,7 @@ Colors:
 	lblack lred lgreen lyellow lblue lmagenta lcyan lwhite
 	Format can be either <fg>:<bg> or just <fg>; use bold if <fg> is
 	prefixed with "B".
+	If the first character is "=", only the pattern will be highlighed.
 	If no color is specified at all, then enbolden the line.
 EOF
 	exit $1
@@ -37,6 +38,10 @@ while [ $# -gt 0 ]; do
 	[ $# -gt 0 ] && shift
 
 	case "$color" in
+	'='*) word=1; color=${color#=} ;;
+	*) word= ;;
+	esac
+	case "$color" in
 	'B'*) bold=1; color=${color#B} ;;
 	*) bold= ;;
 	esac
@@ -48,20 +53,21 @@ while [ $# -gt 0 ]; do
 	[ "x$fg$bg" = "x" ] && bold=1
 
 	awkscript="$awkscript
-/$pattern/ {"
+/$pattern/ {
+	esc0=\"\";
+	esc1=_RESET;"
 
 	[ -n "$bold" ] && awkscript="$awkscript
-	bold();"
+	esc0 = esc0 _BOLD;"
 
 	[ -n "$fg" ] && awkscript="$awkscript
-	setcolor(\"$fg\", \"fg\");"
+	esc0 = esc0 getcolor(\"$fg\", \"fg\");"
 
 	[ -n "$bg" ] && awkscript="$awkscript
-	setcolor(\"$bg\", \"bg\");"
+	esc0 = esc0 getcolor(\"$bg\", \"bg\");"
 
 	awkscript="$awkscript
-	print \$0;
-	reset();"
+	printf(\"%s%s%s\n\", esc0, \$0, esc1);"
 
 	awkscript="$awkscript
 	next;
@@ -87,21 +93,18 @@ BEGIN {
 	_BOLD=_esc"1m";
 }
 
-function setcolor(color, fb) {
+function getcolor(color, fb) {
 	if (color ~ /[a-z]/)
 		color  = _c[color];
 	if (color == "")
 		return;
-	printf("%s", _esc _fb[fb] _esc256 color _m);
+	return sprintf("%s", _esc _fb[fb] _esc256 color _m);
 }
 
 function reset() {
 	printf("%s", _RESET);
 }
 
-function bold() {
-	printf("%s", _BOLD);
-}
 '"$awkscript"'
 {
 	print $0;
