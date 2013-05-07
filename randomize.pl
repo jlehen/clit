@@ -1,5 +1,5 @@
 #!/usr/bin/perl
-# 2010/03/16 Jeremie LE HEN <jeremie.le-hen-ext@socgen.com>
+# 2010/03/16 Jeremie LE HEN <jeremie@le-hen.org>
 
 use strict;
 use warnings;

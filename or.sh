@@ -1,5 +1,5 @@
 #!/bin/sh
-# 2010/08/02 Jeremie LE HEN <jeremie.le-hen-ext@socgen.com>
+# 2010/08/02 Jeremie LE HEN <jeremie@le-hen.org>
 
 usage() {
 	cat <<EOF >&2
