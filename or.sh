@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 # 2010/08/02 Jeremie LE HEN <jeremie.le-hen-ext@socgen.com>
 
 usage() {

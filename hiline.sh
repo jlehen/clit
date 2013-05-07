@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 
 usage() {
 	cat >&2 << EOF

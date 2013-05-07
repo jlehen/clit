@@ -1,4 +1,4 @@
-#!/bin/ksh
+#!/bin/sh
 #
 # Copyright (c) 2010
 #       Jeremie Le Hen <jeremie@le-hen.org> with ideas shamelessly
