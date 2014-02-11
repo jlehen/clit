@@ -53,7 +53,7 @@ getcolor() {
 
 sedscript=""
 while [ $# -gt 0 ]; do
-	pattern="$1"
+	pattern=$(echo "$1" | sed 's,/,\\/,g')
 	color="$2"
 	shift
 	[ $# -gt 0 ] && shift
