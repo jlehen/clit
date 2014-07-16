@@ -7,7 +7,7 @@ OS: All.
 
 Usage: ${0##*/} <pattern> [ [color] [pattern [ [color] [...] ] ] ]
 Patterns:
-	Awk regex (don't forget to escape '/').
+	Extended/modern regex on Linux and *BSD.  Basic regex otherwise.
 Colors:
 	black red green yellow blue magenta cyan white
 	lblack lred lgreen lyellow lblue lmagenta lcyan lwhite
@@ -19,6 +19,12 @@ Color examples:
 EOF
 	exit $1
 }
+
+sedflag=
+case `uname -s` in
+Linux) sedflag=-r ;;
+*BSD) sedflag=-E ;;
+esac
 
 _esc="[";
 _fg=3; _bg=4;
@@ -85,4 +91,4 @@ s/\\($w$pattern$w\\)/$bold$fg$bg\\1$_RESET/"
 		
 done
 
-sed "$sedscript"
+sed $sedflag "$sedscript"
