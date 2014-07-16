@@ -21,9 +21,11 @@ EOF
 }
 
 sedflag=
+lparen='\('
+rparen='\)'
 case `uname -s` in
-Linux) sedflag=-r ;;
-*BSD) sedflag=-E ;;
+Linux) sedflag=-r; lparen='('; rparen=')' ;;
+*BSD) sedflag=-E; lparen='('; rparen=')' ;;
 esac
 
 _esc="[";
@@ -65,9 +67,16 @@ while [ $# -gt 0 ]; do
 	[ $# -gt 0 ] && shift
 
 	case "$color" in
-	'='*) w=; color=${color#=} ;;
-	*) w=".*" ;;
+	'='*) w1=; w2=; color=${color#=} ;;
+	*) w1=".*"; w2=".*" ;;
 	esac
+
+	case "$pattern" in
+	^*$) w1=; w2= ;;
+	^*) w1= ;;
+	*$) w2= ;;
+	esac
+
 	case "$color" in
 	'B'*) bold="$_BOLD"; color=${color#B} ;;
 	*) bold= ;;
@@ -85,9 +94,8 @@ while [ $# -gt 0 ]; do
 	esac
 	[ "x$fg$bg" = "x" ] && bold="$_BOLD"
 
-
 	sedscript="$sedscript
-s/\\($w$pattern$w\\)/$bold$fg$bg\\1$_RESET/"
+s/${lparen}${w1}${pattern}${w2}${rparen}/${bold}${fg}${bg}\\1$_RESET/"
 		
 done
 
