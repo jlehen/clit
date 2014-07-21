@@ -13,6 +13,8 @@ Options:
   -a     Issue an awk expression to match field n.
   -l     Match full line only.
   -p     Put parentheses around.
+  -q     Surround each value with simple quotes.
+  -Q     Surround each value with double quotes.
 Examples:
 	sudo syminq -wwn | egrep \$(cat /tmp/luns_id | or -a 2)
 EOF
@@ -28,13 +30,16 @@ do_awk=0
 awk_field=0
 line=0
 paren=0
-while getopts 'A:a:hlp' opt; do
+quote=
+while getopts 'A:a:hlpqQ' opt; do
 	case $opt in
 	A) do_awk=-1; awk_field="$OPTARG" ;;
 	a) do_awk=1; awk_field="$OPTARG" ;;
 	h) usage ;;
 	l) line=1; paren=1 ;;
 	p) paren=1 ;;
+	q) quote=\"\'\" ;;
+	Q) quote=\"\\\"\" ;;	# Can't use single quote because of awk.
 	*) usage 1 ;;
 	esac
 done
@@ -49,10 +54,11 @@ BEGIN {
 	AWK_FIELD="'"$awk_field"'";
 	LINE='$line';
 	PAREN='$paren';
+	Q='$qq$quote$qq';
 }
 
 {
-	s = sprintf("%s%s%s", s, a ? SEP : "", $0);
+	s = sprintf("%s%s%s", s, a ? SEP : "", Q $0 Q);
 	a = 1;
 	line++;
 }
