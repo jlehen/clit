@@ -54,7 +54,7 @@ BEGIN {
 	AWK_FIELD="'"$awk_field"'";
 	LINE='$line';
 	PAREN='$paren';
-	Q='$qq$quote$qq';
+	Q="'$qq$quote$qq'";
 }
 
 {
